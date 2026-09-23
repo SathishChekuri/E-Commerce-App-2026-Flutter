@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/product_data.dart';
 import '../widgets/product_card.dart';
 import '../widgets/responsive_layout.dart';
-
+import 'product_details_screen.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -21,7 +21,16 @@ class HomeScreen extends StatelessWidget {
       itemBuilder: (context, index) {
         return ProductCard(
           product: products[index],
-          onTap: () {},
+          onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProductDetailsScreen(
+            product: products[index],
+      ),
+    ),
+  );
+},
         );
       },
     );
