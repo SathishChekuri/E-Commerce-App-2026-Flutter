@@ -1,9 +1,31 @@
 import 'package:flutter/material.dart';
+
 import '../data/product_data.dart';
 import '../widgets/product_card.dart';
+import '../widgets/responsive_layout.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  Widget productGrid(int columns) {
+    return GridView.builder(
+      itemCount: products.length,
+
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: columns,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 0.75,
+      ),
+
+      itemBuilder: (context, index) {
+        return ProductCard(
+          product: products[index],
+          onTap: () {},
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +36,10 @@ class HomeScreen extends StatelessWidget {
 
       body: Padding(
         padding: const EdgeInsets.all(12),
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+
           children: [
             const Text(
               'Welcome to My Store',
@@ -38,21 +62,10 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 10),
 
             Expanded(
-              child: GridView.builder(
-                itemCount: products.length,
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 0.75,
-                ),
-                itemBuilder: (context, index) {
-                  return ProductCard(
-                    product: products[index],
-                    onTap: () {},
-                  );
-                },
+              child: ResponsiveLayout(
+                mobile: productGrid(1),
+                tablet: productGrid(2),
+                desktop: productGrid(4),
               ),
             ),
           ],
