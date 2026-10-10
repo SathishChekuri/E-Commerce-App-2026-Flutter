@@ -1,5 +1,9 @@
+
 import 'package:flutter/material.dart';
+
+import 'models/product.dart';
 import 'screens/home_screen.dart';
+import 'screens/product_details_screen.dart';
 
 void main() {
   runApp(const EcommerceApp());
@@ -19,7 +23,25 @@ class EcommerceApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const HomeScreen(),
+      initialRoute: '/home',
+      routes: {
+        '/home': (context) => const HomeScreen(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/product-details') {
+          final argument = settings.arguments;
+
+          if (argument is Product) {
+            return MaterialPageRoute(
+              settings: settings,
+              builder: (context) =>
+                  ProductDetailsScreen(product: argument),
+            );
+          }
+        }
+
+        return null;
+      },
     );
   }
 }

@@ -20,17 +20,14 @@ class HomeScreen extends StatelessWidget {
 
       itemBuilder: (context, index) {
         return ProductCard(
-          product: products[index],
+          product: products[index],       
           onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ProductDetailsScreen(
-            product: products[index],
-      ),
-    ),
-  );
-},
+            Navigator.pushNamed(
+              context,
+              '/product-details',
+              arguments: products[index],
+            );
+          },
         );
       },
     );
