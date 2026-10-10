@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/cart_data.dart';
+import '../widgets/app_primary_button.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -71,6 +72,27 @@ class CartScreen extends StatelessWidget {
                 ),
               );
             },
+          );
+        },
+      ),
+      bottomNavigationBar: ValueListenableBuilder(
+        valueListenable: CartData.items,
+        builder: (context, items, child) {
+          if (items.isEmpty) {
+            return const SizedBox.shrink();
+          }
+
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: AppPrimaryButton(
+                label: 'Proceed to Checkout',
+                icon: Icons.shopping_bag_outlined,
+                onPressed: () {
+                  Navigator.pushNamed(context, '/checkout');
+                },
+              ),
+            ),
           );
         },
       ),

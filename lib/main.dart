@@ -4,6 +4,7 @@ import 'theme/app_theme.dart';
 import 'models/product.dart';
 import 'screens/main_navigation_screen.dart';
 import 'screens/product_details_screen.dart';
+import 'screens/checkout_screen.dart';
 
 void main() {
   runApp(const EcommerceApp());
@@ -20,8 +21,9 @@ class EcommerceApp extends StatelessWidget {
      theme: AppTheme.lightTheme,
       initialRoute: '/home',
       routes: {
-        '/home': (context) => const MainNavigationScreen(),
-      },
+      '/home': (context) => const MainNavigationScreen(),
+      '/checkout': (context) => const CheckoutScreen(),
+       },
       onGenerateRoute: (settings) {
         if (settings.name == '/product-details') {
           final argument = settings.arguments;
