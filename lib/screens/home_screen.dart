@@ -1,11 +1,12 @@
 
 import 'package:flutter/material.dart';
 
-import '../data/product_data.dart';
-import '../widgets/product_card.dart';
+import '../models/product.dart';
+import '../services/product_service.dart';
 import '../widgets/responsive_layout.dart';
+import '../widgets/animated_product_card.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final VoidCallback? onCartChanged;
 
   const HomeScreen({
@@ -13,7 +14,28 @@ class HomeScreen extends StatelessWidget {
     this.onCartChanged,
   });
 
-  Widget productGrid(int columns) {
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final ProductService _productService = ProductService();
+
+  late Future<List<Product>> _productsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _productsFuture = _productService.fetchProducts();
+  }
+
+  void _retryLoading() {
+    setState(() {
+      _productsFuture = _productService.fetchProducts();
+    });
+  }
+
+  Widget _productGrid(List<Product> products, int columns) {
     return GridView.builder(
       itemCount: products.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -23,18 +45,19 @@ class HomeScreen extends StatelessWidget {
         childAspectRatio: 0.75,
       ),
       itemBuilder: (context, index) {
-        return ProductCard(
-          product: products[index],
-          onTap: () async {
-            await Navigator.pushNamed(
-              context,
-              '/product-details',
-              arguments: products[index],
-            );
+       return AnimatedProductCard(
+              product: products[index],
+              index: index,
+              onTap: () async {
+                await Navigator.pushNamed(
+                  context,
+                  '/product-details',
+                  arguments: products[index],
+                );
 
-            onCartChanged?.call();
-          },
-        );
+                widget.onCartChanged?.call();
+              },
+            );
       },
     );
   }
@@ -44,6 +67,13 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('E-Commerce App'),
+        actions: [
+          IconButton(
+            onPressed: _retryLoading,
+            tooltip: 'Refresh products',
+            icon: const Icon(Icons.refresh),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),
@@ -67,10 +97,51 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Expanded(
-              child: ResponsiveLayout(
-                mobile: productGrid(1),
-                tablet: productGrid(2),
-                desktop: productGrid(4),
+              child: FutureBuilder<List<Product>>(
+                future: _productsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.wifi_off,
+                            size: 48,
+                          ),
+                          const SizedBox(height: 12),
+                          const Text('Unable to load products.'),
+                          const SizedBox(height: 12),
+                          ElevatedButton(
+                            onPressed: _retryLoading,
+                            child: const Text('Try Again'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  final products = snapshot.data ?? [];
+
+                  if (products.isEmpty) {
+                    return const Center(
+                      child: Text('No products available.'),
+                    );
+                  }
+
+                  return ResponsiveLayout(
+                    mobile: _productGrid(products, 1),
+                    tablet: _productGrid(products, 2),
+                    desktop: _productGrid(products, 4),
+                  );
+                },
               ),
             ),
           ],
