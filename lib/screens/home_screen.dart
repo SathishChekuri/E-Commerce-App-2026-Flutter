@@ -1,32 +1,38 @@
+
 import 'package:flutter/material.dart';
 
 import '../data/product_data.dart';
 import '../widgets/product_card.dart';
 import '../widgets/responsive_layout.dart';
-import 'product_details_screen.dart';
+
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final VoidCallback? onCartChanged;
+
+  const HomeScreen({
+    super.key,
+    this.onCartChanged,
+  });
 
   Widget productGrid(int columns) {
     return GridView.builder(
       itemCount: products.length,
-
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: columns,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
         childAspectRatio: 0.75,
       ),
-
       itemBuilder: (context, index) {
         return ProductCard(
-          product: products[index],       
-          onTap: () {
-            Navigator.pushNamed(
+          product: products[index],
+          onTap: () async {
+            await Navigator.pushNamed(
               context,
               '/product-details',
               arguments: products[index],
             );
+
+            onCartChanged?.call();
           },
         );
       },
@@ -39,13 +45,10 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('E-Commerce App'),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(12),
-
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-
           children: [
             const Text(
               'Welcome to My Store',
@@ -54,9 +57,7 @@ class HomeScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-
             const SizedBox(height: 15),
-
             const Text(
               'Products',
               style: TextStyle(
@@ -64,9 +65,7 @@ class HomeScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-
             const SizedBox(height: 10),
-
             Expanded(
               child: ResponsiveLayout(
                 mobile: productGrid(1),

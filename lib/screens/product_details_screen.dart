@@ -1,5 +1,9 @@
+
 import 'package:flutter/material.dart';
+
 import '../models/product.dart';
+import '../data/cart_data.dart';
+import '../widgets/app_primary_button.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final Product product;
@@ -15,7 +19,6 @@ class ProductDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Product Details'),
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -73,19 +76,23 @@ class ProductDetailsScreen extends StatelessWidget {
 
             Text(
               product.description,
-              style: const TextStyle(
-                fontSize: 16,
-              ),
+              style: const TextStyle(fontSize: 16),
             ),
 
             const SizedBox(height: 30),
 
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {},
-                child: const Text('Add to Cart'),
-              ),
+            AppPrimaryButton(
+              label: 'Add to Cart',
+              icon: Icons.shopping_cart,
+              onPressed: () {
+                CartData.add(product);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Product added to cart'),
+                  ),
+                );
+              },
             ),
           ],
         ),
