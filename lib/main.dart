@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'models/product.dart';
-import 'screens/home_screen.dart';
+import 'screens/main_navigation_screen.dart';
 import 'screens/product_details_screen.dart';
 
 void main() {
@@ -25,7 +25,7 @@ class EcommerceApp extends StatelessWidget {
       ),
       initialRoute: '/home',
       routes: {
-        '/home': (context) => const HomeScreen(),
+        '/home': (context) => const MainNavigationScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/product-details') {
